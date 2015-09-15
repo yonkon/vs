@@ -9,6 +9,7 @@ namespace form {
 	using namespace System::Data;
 	using namespace System::Drawing;
 	using namespace System::Media;
+	using namespace System::Collections::Generic;
 
 	//global counters to count destroyed ships and number of shots
 	int ShipsDestroyed = 0;
@@ -69,12 +70,20 @@ namespace form {
 	private: System::Windows::Forms::Button^  b_checkmate;
 	private: System::Windows::Forms::Label^  label1;
 	private: System::Windows::Forms::NumericUpDown^  numericUpDown1;
+			 
 
 
 	private:
 		/// <summary>
 		/// Required designer variable.
+		Figure^ selectedFigure;
+		Figure^ lastMovedFigure;
 		array<Figure^, 2>^ field;
+		Coords^ lastMovePreviousCoords;
+		bool rookingWhiteLeft = true,
+			rookingWhiteRight = true,
+			rookingBlackLeft = true,
+			rookingBlackRight = true;
 		/// </summary>
 
 
@@ -349,6 +358,7 @@ namespace form {
 			this->dataGridView1->Size = System::Drawing::Size(455, 455);
 			this->dataGridView1->TabIndex = 0;
 			this->dataGridView1->CellContentClick += gcnew System::Windows::Forms::DataGridViewCellEventHandler(this, &Form1::dataGridView1_CellContentClick);
+			this->dataGridView1->CellMouseClick += gcnew System::Windows::Forms::DataGridViewCellMouseEventHandler(this, &Form1::dataGridView1_CellMouseClick);
 			// 
 			// Column1
 			// 
@@ -427,6 +437,7 @@ namespace form {
 	private: System::Void dataGridView1_CellContentClick(System::Object^  sender, System::Windows::Forms::DataGridViewCellEventArgs^  e) {
 		System::Collections::Generic::List<Coords^>^ moves;
 		Figure^ f = field[e->RowIndex, e->ColumnIndex];
+		this->selectedFigure = f;
 		if (nullptr != f) {
 			moves = f->getAllMoves();
 			for (int i = 0; i < moves->Count; i++) {
@@ -442,6 +453,7 @@ namespace form {
 	}
 
 			 System::Void initTable() {
+				 rookingBlackLeft = rookingBlackRight = rookingWhiteLeft = rookingWhiteRight = true;
 				 this->dataGridView1->Rows->Clear();
 				 this->dataGridView1->Rows->Add(8);
 				 int ccolor = Figure::BLACK;
@@ -453,6 +465,9 @@ namespace form {
 						 (ccolor == Figure::BLACK) ? System::Drawing::Color::DimGray : System::Drawing::Color::WhiteSmoke;
 					 this->dataGridView1->Rows[Math::Ceiling(i / 8)]->Cells[i % 8]->Value = Image::FromFile(L"figures/empty.png");
 				 }
+				 selectedFigure = nullptr;
+				 lastMovedFigure = nullptr;
+				 lastMovePreviousCoords = nullptr;
 			 }
 
 			 System::Void placeFigure(Figure^ f) {
@@ -465,6 +480,62 @@ namespace form {
 			 System::Void removeFigure(int x, int y) {
 				 this->dataGridView1->Rows[y]->Cells[x]->Value = Image::FromFile(L"figures/empty.png" );
 				 this->field[y, x] = nullptr;
+			 }
+
+			 bool moveFigure(Figure^ f, int x, int y) {
+				 bool isLegal = isLegalMove(f, x, y);
+				 if (isLegal) {
+					 this->lastMovePreviousCoords = gcnew Coords(f->x, f->y);
+					 removeFigure(f->x, f->y);
+					 f->x = x;
+					 f->y = y;
+					 placeFigure(f);
+					 this->lastMovedFigure = f;
+					 dataGridView1->ClearSelection();
+					 this->selectedFigure = nullptr;
+					 return true;
+				 }
+				 return false;
+			 }
+
+			 bool isLegalMove(Figure^ offence, int x, int y) {
+				 List<Coords^>^ moves = offence->getAllMoves();
+				 for (int i = 0; i < moves->Count; i++) {
+					 if (moves[i]->x == x && moves[i]->y == y) {
+						 return true;
+					 }
+				 }
+				 return false;
+			 };
+
+			 bool isCheck(int forWhatColor) {
+				 Figure^ king = nullptr;
+				 Figure^ offence = nullptr;
+				for (int x = 0; x < 8; x++) {
+					for (int y = 0; y < 8; y++) {
+						if (nullptr != field[x, y] && field[x, y]->type == Figure::KING && field[x, y]->color == forWhatColor) {
+							king = field[x, y];
+							break;
+						}
+					}
+				}
+				if (nullptr == king) {
+					MessageBox::Show(L"No king on a desk");
+					return false;
+				}
+				int offenceColor = (forWhatColor == Figure::WHITE) ? Figure::BLACK : Figure::WHITE;
+				for (int x = 0; x < 8; x++) {
+					for (int y = 0; y < 8; y++) {
+						if (nullptr != field[x, y] && field[x, y]->color == offenceColor) {
+							offence = field[x, y];
+							if (this->isLegalMove(offence, king->x, king->y)) {
+								return true;
+							}
+						}
+					}
+				}
+
+				return false;
 			 }
 
 	private: System::Void b_place_Click(System::Object^  sender, System::EventArgs^  e) {
@@ -592,6 +663,25 @@ private: System::Void b_standard_Click(System::Object^  sender, System::EventArg
 private: System::Void b_checkmate_Click(System::Object^  sender, System::EventArgs^  e) {
 	 
 }
+
+private: System::Void dataGridView1_CellMouseClick(System::Object^  sender, System::Windows::Forms::DataGridViewCellMouseEventArgs^  e) {
+	if (e->RowIndex >= 0 && e->ColumnIndex >= 0 && e->Button == System::Windows::Forms::MouseButtons::Right) {
+		if (nullptr != this->selectedFigure) {
+			int x = e->ColumnIndex;
+			int y = e->RowIndex;
+			bool isLegal = isLegalMove(this->selectedFigure, x, y);
+			if (isLegal) {
+				removeFigure(this->selectedFigure->x, this->selectedFigure->y);
+				this->selectedFigure->x = x;
+				this->selectedFigure->y = y;
+				placeFigure(this->selectedFigure);
+				dataGridView1->ClearSelection();
+			}
+		}
+	}
+}
+
+
 };
 }
 
