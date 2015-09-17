@@ -70,7 +70,7 @@ namespace form {
 	private: System::Windows::Forms::Button^  b_checkmate;
 	private: System::Windows::Forms::Label^  label1;
 	private: System::Windows::Forms::NumericUpDown^  numericUpDown1;
-			 
+
 
 
 	private:
@@ -80,10 +80,10 @@ namespace form {
 		Figure^ lastMovedFigure;
 		array<Figure^, 2>^ field;
 		Coords^ lastMovePreviousCoords;
-		bool rookingWhiteLeft = true,
-			rookingWhiteRight = true,
-			rookingBlackLeft = true,
-			rookingBlackRight = true;
+		bool rookingWhiteLeft,		
+			rookingWhiteRight,
+			rookingBlackLeft ,
+			rookingBlackRight;
 		/// </summary>
 
 
@@ -96,6 +96,7 @@ namespace form {
 		{
 			System::Windows::Forms::DataGridViewCellStyle^  dataGridViewCellStyle1 = (gcnew System::Windows::Forms::DataGridViewCellStyle());
 			System::Windows::Forms::DataGridViewCellStyle^  dataGridViewCellStyle2 = (gcnew System::Windows::Forms::DataGridViewCellStyle());
+			System::Windows::Forms::DataGridViewCellStyle^  dataGridViewCellStyle3 = (gcnew System::Windows::Forms::DataGridViewCellStyle());
 			this->groupBox1 = (gcnew System::Windows::Forms::GroupBox());
 			this->b_checkmate = (gcnew System::Windows::Forms::Button());
 			this->label1 = (gcnew System::Windows::Forms::Label());
@@ -124,11 +125,11 @@ namespace form {
 			this->Column7 = (gcnew System::Windows::Forms::DataGridViewImageColumn());
 			this->Column8 = (gcnew System::Windows::Forms::DataGridViewImageColumn());
 			this->groupBox1->SuspendLayout();
-			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->numericUpDown1))->BeginInit();
+			(cli::safe_cast<System::ComponentModel::ISupportInitialize^  >(this->numericUpDown1))->BeginInit();
 			this->panel2->SuspendLayout();
 			this->panel1->SuspendLayout();
 			this->groupBox2->SuspendLayout();
-			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->dataGridView1))->BeginInit();
+			(cli::safe_cast<System::ComponentModel::ISupportInitialize^  >(this->dataGridView1))->BeginInit();
 			this->SuspendLayout();
 			// 
 			// groupBox1
@@ -333,7 +334,7 @@ namespace form {
 			this->dataGridView1->BackgroundColor = System::Drawing::Color::Snow;
 			dataGridViewCellStyle1->Alignment = System::Windows::Forms::DataGridViewContentAlignment::MiddleCenter;
 			dataGridViewCellStyle1->BackColor = System::Drawing::SystemColors::Control;
-			dataGridViewCellStyle1->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 8.25F, System::Drawing::FontStyle::Regular,
+			dataGridViewCellStyle1->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 8.25F, System::Drawing::FontStyle::Regular, 
 				System::Drawing::GraphicsUnit::Point, static_cast<System::Byte>(204)));
 			dataGridViewCellStyle1->ForeColor = System::Drawing::SystemColors::WindowText;
 			dataGridViewCellStyle1->SelectionBackColor = System::Drawing::SystemColors::Highlight;
@@ -341,19 +342,27 @@ namespace form {
 			dataGridViewCellStyle1->WrapMode = System::Windows::Forms::DataGridViewTriState::True;
 			this->dataGridView1->ColumnHeadersDefaultCellStyle = dataGridViewCellStyle1;
 			this->dataGridView1->ColumnHeadersHeight = 50;
-			this->dataGridView1->Columns->AddRange(gcnew cli::array< System::Windows::Forms::DataGridViewColumn^  >(8) {
-				this->Column1,
-					this->Column2, this->Column3, this->Column4, this->Column5, this->Column6, this->Column7, this->Column8
-			});
+			this->dataGridView1->Columns->AddRange(gcnew cli::array< System::Windows::Forms::DataGridViewColumn^  >(8) {this->Column1, 
+				this->Column2, this->Column3, this->Column4, this->Column5, this->Column6, this->Column7, this->Column8});
+			dataGridViewCellStyle2->Alignment = System::Windows::Forms::DataGridViewContentAlignment::MiddleCenter;
+			dataGridViewCellStyle2->BackColor = System::Drawing::SystemColors::Window;
+			dataGridViewCellStyle2->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 8.25F, System::Drawing::FontStyle::Regular, 
+				System::Drawing::GraphicsUnit::Point, static_cast<System::Byte>(204)));
+			dataGridViewCellStyle2->ForeColor = System::Drawing::SystemColors::ControlText;
+			dataGridViewCellStyle2->SelectionBackColor = System::Drawing::Color::Tan;
+			dataGridViewCellStyle2->SelectionForeColor = System::Drawing::SystemColors::HighlightText;
+			dataGridViewCellStyle2->WrapMode = System::Windows::Forms::DataGridViewTriState::False;
+			this->dataGridView1->DefaultCellStyle = dataGridViewCellStyle2;
 			this->dataGridView1->Dock = System::Windows::Forms::DockStyle::Fill;
 			this->dataGridView1->Location = System::Drawing::Point(3, 16);
 			this->dataGridView1->Name = L"dataGridView1";
 			this->dataGridView1->RowHeadersWidth = 50;
-			dataGridViewCellStyle2->Alignment = System::Windows::Forms::DataGridViewContentAlignment::MiddleCenter;
-			this->dataGridView1->RowsDefaultCellStyle = dataGridViewCellStyle2;
+			dataGridViewCellStyle3->Alignment = System::Windows::Forms::DataGridViewContentAlignment::MiddleCenter;
+			this->dataGridView1->RowsDefaultCellStyle = dataGridViewCellStyle3;
 			this->dataGridView1->RowTemplate->DefaultCellStyle->Alignment = System::Windows::Forms::DataGridViewContentAlignment::MiddleCenter;
 			this->dataGridView1->RowTemplate->Height = 50;
 			this->dataGridView1->RowTemplate->Resizable = System::Windows::Forms::DataGridViewTriState::True;
+			this->dataGridView1->SelectionMode = System::Windows::Forms::DataGridViewSelectionMode::CellSelect;
 			this->dataGridView1->ShowCellErrors = false;
 			this->dataGridView1->Size = System::Drawing::Size(455, 455);
 			this->dataGridView1->TabIndex = 0;
@@ -420,13 +429,13 @@ namespace form {
 			this->Load += gcnew System::EventHandler(this, &Form1::Form1_Load);
 			this->groupBox1->ResumeLayout(false);
 			this->groupBox1->PerformLayout();
-			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->numericUpDown1))->EndInit();
+			(cli::safe_cast<System::ComponentModel::ISupportInitialize^  >(this->numericUpDown1))->EndInit();
 			this->panel2->ResumeLayout(false);
 			this->panel2->PerformLayout();
 			this->panel1->ResumeLayout(false);
 			this->panel1->PerformLayout();
 			this->groupBox2->ResumeLayout(false);
-			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->dataGridView1))->EndInit();
+			(cli::safe_cast<System::ComponentModel::ISupportInitialize^  >(this->dataGridView1))->EndInit();
 			this->ResumeLayout(false);
 
 		}
@@ -435,254 +444,311 @@ namespace form {
 
 
 	private: System::Void dataGridView1_CellContentClick(System::Object^  sender, System::Windows::Forms::DataGridViewCellEventArgs^  e) {
-		System::Collections::Generic::List<Coords^>^ moves;
-		Figure^ f = field[e->RowIndex, e->ColumnIndex];
-		this->selectedFigure = f;
-		if (nullptr != f) {
-			moves = f->getAllMoves();
-			for (int i = 0; i < moves->Count; i++) {
-				Coords^ c = moves[i];
-				this->dataGridView1->Rows[c->y]->Cells[c->x]->Selected = true;
-			}
-		}	
-	}
+						 System::Collections::Generic::List<Coords^>^ moves;
+						 Figure^ f = field[e->RowIndex, e->ColumnIndex];
+						 this->selectedFigure = f;
+						 if (nullptr != f) {
+							 moves = f->getAllMoves();
+							 for (int i = 0; i < moves->Count; i++) {
+								 Coords^ c = moves[i];
+								 this->dataGridView1->Rows[c->y]->Cells[c->x]->Selected = true;
+							 }
+						 }	
+					 }
 	private: System::Void Form1_Load(System::Object^  sender, System::EventArgs^  e) {
-		this->field = gcnew array<Figure^, 2>(8, 8);
-		this->initTable();
-		placeFigure(gcnew Figure(4, 6, Figure::QUEEN, Figure::BLACK));
-	}
-
-			 System::Void initTable() {
-				 rookingBlackLeft = rookingBlackRight = rookingWhiteLeft = rookingWhiteRight = true;
-				 this->dataGridView1->Rows->Clear();
-				 this->dataGridView1->Rows->Add(8);
-				 int ccolor = Figure::BLACK;
-				 for (int i = 0; i < 64; i++) {
-					 if (i % 8) {
-						 ccolor = (ccolor == Figure::WHITE) ? Figure::BLACK : Figure::WHITE;
+						 this->field = gcnew array<Figure^, 2>(8, 8);
+						 this->initTable();
+						 placeFigure(gcnew Figure(4, 6, Figure::QUEEN, Figure::BLACK));
 					 }
-					 this->dataGridView1->Rows[Math::Ceiling(i / 8)]->Cells[i % 8]->Style->BackColor = 
-						 (ccolor == Figure::BLACK) ? System::Drawing::Color::DimGray : System::Drawing::Color::WhiteSmoke;
-					 this->dataGridView1->Rows[Math::Ceiling(i / 8)]->Cells[i % 8]->Value = Image::FromFile(L"figures/empty.png");
-				 }
-				 selectedFigure = nullptr;
-				 lastMovedFigure = nullptr;
-				 lastMovePreviousCoords = nullptr;
-			 }
 
-			 System::Void placeFigure(Figure^ f) {
-				 String^ colorDir = (f->color == Figure::WHITE) ? L"white/" : L"black/";
-				 String^ figureName = f->getTypeString() + L".png";
-				 this->dataGridView1->Rows[f->y]->Cells[f->x]->Value = Image::FromFile(L"figures/" + colorDir + figureName);
-				 this->field[f->y, f->x] = f;
-			 }
-
-			 System::Void removeFigure(int x, int y) {
-				 this->dataGridView1->Rows[y]->Cells[x]->Value = Image::FromFile(L"figures/empty.png" );
-				 this->field[y, x] = nullptr;
-			 }
-
-			 bool moveFigure(Figure^ f, int x, int y) {
-				 bool isLegal = isLegalMove(f, x, y);
-				 if (isLegal) {
-					 this->lastMovePreviousCoords = gcnew Coords(f->x, f->y);
-					 removeFigure(f->x, f->y);
-					 f->x = x;
-					 f->y = y;
-					 placeFigure(f);
-					 this->lastMovedFigure = f;
-					 dataGridView1->ClearSelection();
-					 this->selectedFigure = nullptr;
-					 return true;
-				 }
-				 return false;
-			 }
-
-			 bool isLegalMove(Figure^ offence, int x, int y) {
-				 List<Coords^>^ moves = offence->getAllMoves();
-				 for (int i = 0; i < moves->Count; i++) {
-					 if (moves[i]->x == x && moves[i]->y == y) {
-						 return true;
+					 System::Void initTable() {
+						 rookingBlackLeft = rookingBlackRight = rookingWhiteLeft = rookingWhiteRight = true;
+						 this->dataGridView1->Rows->Clear();
+						 this->dataGridView1->Rows->Add(8);
+						 int ccolor = Figure::WHITE;
+						 for (int i = 0; i < 64; i++) {
+							 if (i % 8) {
+								 ccolor = (ccolor == Figure::WHITE) ? Figure::BLACK: Figure::WHITE;
+							 }
+							 this->dataGridView1->Rows[Math::Ceiling(i / 8)]->Cells[i % 8]->Style->BackColor = 
+								 (ccolor == Figure::BLACK) ? System::Drawing::Color::DimGray : System::Drawing::Color::WhiteSmoke;
+							 this->dataGridView1->Rows[Math::Ceiling(i / 8)]->Cells[i % 8]->Value = Image::FromFile(L"figures/empty.png");
+						 }
+						 selectedFigure = nullptr;
+						 lastMovedFigure = nullptr;
+						 lastMovePreviousCoords = nullptr;
 					 }
-				 }
-				 return false;
-			 };
 
-			 bool isCheck(int forWhatColor) {
-				 Figure^ king = nullptr;
-				 Figure^ offence = nullptr;
-				for (int x = 0; x < 8; x++) {
-					for (int y = 0; y < 8; y++) {
-						if (nullptr != field[x, y] && field[x, y]->type == Figure::KING && field[x, y]->color == forWhatColor) {
-							king = field[x, y];
-							break;
-						}
-					}
-				}
-				if (nullptr == king) {
-					MessageBox::Show(L"No king on a desk");
-					return false;
-				}
-				int offenceColor = (forWhatColor == Figure::WHITE) ? Figure::BLACK : Figure::WHITE;
-				for (int x = 0; x < 8; x++) {
-					for (int y = 0; y < 8; y++) {
-						if (nullptr != field[x, y] && field[x, y]->color == offenceColor) {
-							offence = field[x, y];
-							if (this->isLegalMove(offence, king->x, king->y)) {
-								return true;
-							}
-						}
-					}
-				}
+					 System::Void placeFigure(Figure^ f) {
+						 String^ colorDir = (f->color == Figure::WHITE) ? L"white/" : L"black/";
+						 String^ figureName = f->getTypeString() + L".png";
+						 this->dataGridView1->Rows[f->y]->Cells[f->x]->Value = Image::FromFile(L"figures/" + colorDir + figureName);
+						 this->field[f->y, f->x] = f;
+					 }
 
-				return false;
-			 }
+					 System::Void removeFigure(int x, int y) {
+						 this->dataGridView1->Rows[y]->Cells[x]->Value = Image::FromFile(L"figures/empty.png" );
+						 this->field[y, x] = nullptr;
+					 }
+
+					 bool moveFigure(Figure^ f, int x, int y) {
+						 Figure^ target = field[x,y];
+						 int prevX = f->x, prevY = f->y;
+						 bool isChecked = this->isCheck(f->color);
+						 bool origRookingsWhiteLeft = rookingWhiteLeft;
+						 bool origRookingsWhiteRight = rookingWhiteRight;
+						 bool origRookingsBlackLeft = rookingBlackLeft;
+						 bool origRookingsBlackRight = rookingBlackRight;
+						 if (isChecked) {
+							 rookingBlackLeft = rookingBlackRight = rookingWhiteLeft = rookingWhiteRight = false;
+						 }
+						 bool isLegal = isLegalMove(f, x, y);
+						 if (isLegal) {
+							 this->lastMovePreviousCoords = gcnew Coords(f->x, f->y);
+							 removeFigure(f->x, f->y);
+							 f->x = x;
+							 f->y = y;
+							 placeFigure(f);
+							 if (isCheck(f->color)) {
+								 if (nullptr == target) {
+									 removeFigure(x,y);
+								 } else {
+										placeFigure(target);
+								 }
+								 f->x = prevX;
+								 f->y = prevY;
+								 rookingWhiteLeft = origRookingsWhiteLeft;
+								 rookingWhiteRight = origRookingsWhiteRight;
+								 rookingBlackLeft = origRookingsBlackLeft;
+								 rookingBlackRight = origRookingsBlackRight;
+								 return false;
+							 }
+							 if(f->type == Figure::ROOK) {
+								 if (f->color == Figure::WHITE) {
+									 if (prevX == 0) {
+										 rookingWhiteLeft = false;
+									 }
+									 if (prevX == 7) {
+										 rookingWhiteRight = false;
+									 }
+								 } else {
+									 if (prevX == 0) {
+										 rookingBlackLeft = false;
+									 }
+									 if (prevX == 7) {
+										 rookingBlackRight = false;
+									 }
+								 }
+							 }
+							 if (f->type == f->KING) {
+								 if (f->color = f->BLACK) {
+									 rookingBlackLeft = false;
+									 rookingBlackRight = false;
+								 } else {
+									 rookingWhiteLeft = false;
+									 rookingWhiteRight = false;
+								 }
+							 }
+							 this->lastMovedFigure = f;
+							 dataGridView1->ClearSelection();
+							 this->selectedFigure = nullptr;
+							 rookingWhiteLeft = origRookingsWhiteLeft;
+							 rookingWhiteRight = origRookingsWhiteRight;
+							 rookingBlackLeft = origRookingsBlackLeft;
+							 rookingBlackRight = origRookingsBlackRight;
+							 return true;
+						 }
+						 rookingWhiteLeft = origRookingsWhiteLeft;
+						 rookingWhiteRight = origRookingsWhiteRight;
+						 rookingBlackLeft = origRookingsBlackLeft;
+						 rookingBlackRight = origRookingsBlackRight;
+						 return false;
+					 }
+
+					 bool isLegalMove(Figure^ offence, int x, int y) {
+						 List<Coords^>^ moves = offence->getAllMoves();
+						 for (int i = 0; i < moves->Count; i++) {
+							 if (moves[i]->x == x && moves[i]->y == y) {
+								 return true;
+							 }
+						 }
+						 return false;
+					 };
+
+					 bool isCheck(int forWhatColor) {
+						 Figure^ king = nullptr;
+						 Figure^ offence = nullptr;
+						 for (int x = 0; x < 8; x++) {
+							 for (int y = 0; y < 8; y++) {
+								 if (nullptr != field[x, y] && field[x, y]->type == Figure::KING && field[x, y]->color == forWhatColor) {
+									 king = field[x, y];
+									 break;
+								 }
+							 }
+						 }
+						 if (nullptr == king) {
+							 MessageBox::Show(L"No king on a desk");
+							 return false;
+						 }
+						 int offenceColor = (forWhatColor == Figure::WHITE) ? Figure::BLACK : Figure::WHITE;
+						 for (int x = 0; x < 8; x++) {
+							 for (int y = 0; y < 8; y++) {
+								 if (nullptr != field[x, y] && field[x, y]->color == offenceColor) {
+									 offence = field[x, y];
+									 if (this->isLegalMove(offence, king->x, king->y)) {
+										 return true;
+									 }
+								 }
+							 }
+						 }
+
+						 return false;
+					 }
 
 	private: System::Void b_place_Click(System::Object^  sender, System::EventArgs^  e) {
-		int type = Figure::PAWN, color = Figure::WHITE, y = 0, x = 0;
-		if (rb_black->Checked) {
-			color = Figure::BLACK;
-		}
-		if (rb_bishop->Checked) {
-			type = Figure::BISHOP;
-		}
-		if (rb_king->Checked) {
-			type = Figure::KING;
-		}
-		if (rb_knight->Checked) {
-			type = Figure::KNIGHT;
-		}
-		if (rb_queen->Checked) {
-			type = Figure::QUEEN;
-		}
-		if (rb_rook->Checked) {
-			type = Figure::ROOK;
-		}
-		y = dataGridView1->CurrentCellAddress.Y;
-		x = dataGridView1->CurrentCellAddress.X;
-		placeFigure(gcnew Figure(x, y, type, color));
-	}
-private: System::Void b_remove_Click(System::Object^  sender, System::EventArgs^  e) {
-		int y = dataGridView1->CurrentCellAddress.Y;
-		int x = dataGridView1->CurrentCellAddress.X;
-		removeFigure(x, y);
-	}
-private: System::Void b_standard_Click(System::Object^  sender, System::EventArgs^  e) {
-	int color, type, x, y;
-	for (x = 0; x < 8; x++) {
-		for (y = 0; y < 8; y++) {
-			removeFigure(x, y);
-		}
-	}
+						 int type = Figure::PAWN, color = Figure::WHITE, y = 0, x = 0;
+						 if (rb_black->Checked) {
+							 color = Figure::BLACK;
+						 }
+						 if (rb_bishop->Checked) {
+							 type = Figure::BISHOP;
+						 }
+						 if (rb_king->Checked) {
+							 type = Figure::KING;
+						 }
+						 if (rb_knight->Checked) {
+							 type = Figure::KNIGHT;
+						 }
+						 if (rb_queen->Checked) {
+							 type = Figure::QUEEN;
+						 }
+						 if (rb_rook->Checked) {
+							 type = Figure::ROOK;
+						 }
+						 y = dataGridView1->CurrentCellAddress.Y;
+						 x = dataGridView1->CurrentCellAddress.X;
+						 placeFigure(gcnew Figure(x, y, type, color));
+					 }
+	private: System::Void b_remove_Click(System::Object^  sender, System::EventArgs^  e) {
+						 int y = dataGridView1->CurrentCellAddress.Y;
+						 int x = dataGridView1->CurrentCellAddress.X;
+						 removeFigure(x, y);
+					 }
+	private: System::Void b_standard_Click(System::Object^  sender, System::EventArgs^  e) {
+						 int color, type, x, y;
+						 for (x = 0; x < 8; x++) {
+							 for (y = 0; y < 8; y++) {
+								 removeFigure(x, y);
+							 }
+						 }
 
-	/////////////////////////////////////////////////WHITE
-	color = Figure::WHITE;
-	
-	//PAWNS
-	type = Figure::PAWN;
-	y = 6;
-	for (x = 0; x < 8; x++) {
-		placeFigure(gcnew Figure(x, y, type, color));
-	}
+						 /////////////////////////////////////////////////WHITE
+						 color = Figure::WHITE;
 
-	//ROOKS
-	y = 7;
-	type = Figure::ROOK;
-	x = 0;
-	placeFigure(gcnew Figure(x, y, type, color));
-	x = 7;
-	placeFigure(gcnew Figure(x, y, type, color));
+						 //PAWNS
+						 type = Figure::PAWN;
+						 y = 6;
+						 for (x = 0; x < 8; x++) {
+							 placeFigure(gcnew Figure(x, y, type, color));
+						 }
 
-	//KNIGHTS
-	type = Figure::KNIGHT;
-	x = 1;
-	placeFigure(gcnew Figure(x, y, type, color));
-	x = 6;
-	placeFigure(gcnew Figure(x, y, type, color));
-	
-	//BISHOPS
-	type = Figure::BISHOP;
-	x = 2;
-	placeFigure(gcnew Figure(x, y, type, color));
-	x = 5;
-	placeFigure(gcnew Figure(x, y, type, color));
+						 //ROOKS
+						 y = 7;
+						 type = Figure::ROOK;
+						 x = 0;
+						 placeFigure(gcnew Figure(x, y, type, color));
+						 x = 7;
+						 placeFigure(gcnew Figure(x, y, type, color));
 
-	//QUEEN
-	type = Figure::QUEEN;
-	x = 4;
-	placeFigure(gcnew Figure(x, y, type, color));
-	
-	//KING
-	type = Figure::KING;
-	x = 3;
-	placeFigure(gcnew Figure(x, y, type, color));
-	
-	///////////////////////////////////////////////BLACK
-	color = Figure::BLACK;
+						 //KNIGHTS
+						 type = Figure::KNIGHT;
+						 x = 1;
+						 placeFigure(gcnew Figure(x, y, type, color));
+						 x = 6;
+						 placeFigure(gcnew Figure(x, y, type, color));
 
-	//PAWNS
-	type = Figure::PAWN;
-	y = 1;
-	for (x = 0; x < 8; x++) {
-		placeFigure(gcnew Figure(x, y, type, color));
-	}
+						 //BISHOPS
+						 type = Figure::BISHOP;
+						 x = 2;
+						 placeFigure(gcnew Figure(x, y, type, color));
+						 x = 5;
+						 placeFigure(gcnew Figure(x, y, type, color));
 
-	//ROOKS
-	y = 0;
-	type = Figure::ROOK;
-	x = 0;
-	placeFigure(gcnew Figure(x, y, type, color));
-	x = 7;
-	placeFigure(gcnew Figure(x, y, type, color));
+						 //QUEEN
+						 type = Figure::QUEEN;
+						 x = 3;
+						 placeFigure(gcnew Figure(x, y, type, color));
 
-	//KNIGHTS
-	type = Figure::KNIGHT;
-	x = 1;
-	placeFigure(gcnew Figure(x, y, type, color));
-	x = 6;
-	placeFigure(gcnew Figure(x, y, type, color));
+						 //KING
+						 type = Figure::KING;
+						 x = 4;
+						 placeFigure(gcnew Figure(x, y, type, color));
 
-	//BISHOPS
-	type = Figure::BISHOP;
-	x = 2;
-	placeFigure(gcnew Figure(x, y, type, color));
-	x = 5;
-	placeFigure(gcnew Figure(x, y, type, color));
+						 ///////////////////////////////////////////////BLACK
+						 color = Figure::BLACK;
 
-	//QUEEN
-	type = Figure::QUEEN;
-	x = 4;
-	placeFigure(gcnew Figure(x, y, type, color));
+						 //PAWNS
+						 type = Figure::PAWN;
+						 y = 1;
+						 for (x = 0; x < 8; x++) {
+							 placeFigure(gcnew Figure(x, y, type, color));
+						 }
 
-	//KING
-	type = Figure::KING;
-	x = 3;
-	placeFigure(gcnew Figure(x, y, type, color));
+						 //ROOKS
+						 y = 0;
+						 type = Figure::ROOK;
+						 x = 0;
+						 placeFigure(gcnew Figure(x, y, type, color));
+						 x = 7;
+						 placeFigure(gcnew Figure(x, y, type, color));
 
-	}
-private: System::Void b_checkmate_Click(System::Object^  sender, System::EventArgs^  e) {
-	 
+						 //KNIGHTS
+						 type = Figure::KNIGHT;
+						 x = 1;
+						 placeFigure(gcnew Figure(x, y, type, color));
+						 x = 6;
+						 placeFigure(gcnew Figure(x, y, type, color));
+
+						 //BISHOPS
+						 type = Figure::BISHOP;
+						 x = 2;
+						 placeFigure(gcnew Figure(x, y, type, color));
+						 x = 5;
+						 placeFigure(gcnew Figure(x, y, type, color));
+
+						 //QUEEN
+						 type = Figure::QUEEN;
+						 x = 3;
+						 placeFigure(gcnew Figure(x, y, type, color));
+
+						 //KING
+						 type = Figure::KING;
+						 x = 4;
+						 placeFigure(gcnew Figure(x, y, type, color));
+
+					 }
+	private: System::Void b_checkmate_Click(System::Object^  sender, System::EventArgs^  e) {
+
+					 }
+
+	private: System::Void dataGridView1_CellMouseClick(System::Object^  sender, System::Windows::Forms::DataGridViewCellMouseEventArgs^  e) {
+						 if (e->RowIndex >= 0 && e->ColumnIndex >= 0 && e->Button == System::Windows::Forms::MouseButtons::Right) {
+							 if (nullptr != this->selectedFigure) {
+								 int x = e->ColumnIndex;
+								 int y = e->RowIndex;
+								 bool isLegal = isLegalMove(this->selectedFigure, x, y);
+								 if (isLegal) {
+									 removeFigure(this->selectedFigure->x, this->selectedFigure->y);
+									 this->selectedFigure->x = x;
+									 this->selectedFigure->y = y;
+									 placeFigure(this->selectedFigure);
+									 dataGridView1->ClearSelection();
+								 }
+							 }
+						 }
+					 }
+
+
+	};
 }
-
-private: System::Void dataGridView1_CellMouseClick(System::Object^  sender, System::Windows::Forms::DataGridViewCellMouseEventArgs^  e) {
-	if (e->RowIndex >= 0 && e->ColumnIndex >= 0 && e->Button == System::Windows::Forms::MouseButtons::Right) {
-		if (nullptr != this->selectedFigure) {
-			int x = e->ColumnIndex;
-			int y = e->RowIndex;
-			bool isLegal = isLegalMove(this->selectedFigure, x, y);
-			if (isLegal) {
-				removeFigure(this->selectedFigure->x, this->selectedFigure->y);
-				this->selectedFigure->x = x;
-				this->selectedFigure->y = y;
-				placeFigure(this->selectedFigure);
-				dataGridView1->ClearSelection();
-			}
-		}
-	}
-}
-
-
-};
-}
-
 
