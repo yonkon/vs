@@ -213,6 +213,10 @@ public:
 				}
 			}
 		}
+		if (this->y % 7 == 0 && this->x == 4) {
+			res->Add(gcnew Coords(2,this->y) );
+			res->Add(gcnew Coords(6,this->y) );
+		}
 		return res;
 	}
 
@@ -235,10 +239,5 @@ public:
 			return L"unknown";
 		}
 	}
-
 	
-
-	
-
 };
-
