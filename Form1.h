@@ -448,7 +448,7 @@ namespace form {
 						 Figure^ f = field[e->RowIndex, e->ColumnIndex];
 						 this->selectedFigure = f;
 						 if (nullptr != f) {
-							 moves = f->getAllMoves();
+							 moves = f->getAllMoves(field);
 							 for (int i = 0; i < moves->Count; i++) {
 								 Coords^ c = moves[i];
 								 this->dataGridView1->Rows[c->y]->Cells[c->x]->Selected = true;
@@ -492,7 +492,10 @@ namespace form {
 					 }
 
 					 bool moveFigure(Figure^ f, int x, int y) {
-						 Figure^ target = field[x,y];
+						 Figure^ target = field[y,x];
+						 if (nullptr != target && target->color == f->color) {
+							 return false;
+						 }
 						 int prevX = f->x, prevY = f->y;
 						 bool isChecked = this->isCheck(f->color);
 						 bool origRookingsWhiteLeft = rookingWhiteLeft;
@@ -504,7 +507,6 @@ namespace form {
 						 }
 						 bool isLegal = isLegalMove(f, x, y);
 						 if (isLegal) {
-							 this->lastMovePreviousCoords = gcnew Coords(f->x, f->y);
 							 removeFigure(f->x, f->y);
 							 f->x = x;
 							 f->y = y;
@@ -515,40 +517,43 @@ namespace form {
 								 } else {
 										placeFigure(target);
 								 }
-								 f->x = prevX;
-								 f->y = prevY;
+								
 								 rookingWhiteLeft = origRookingsWhiteLeft;
 								 rookingWhiteRight = origRookingsWhiteRight;
 								 rookingBlackLeft = origRookingsBlackLeft;
 								 rookingBlackRight = origRookingsBlackRight;
+								 f->x = prevX;
+								 f->y = prevY;
+								 placeFigure(f);
 								 return false;
 							 }
 							 if(f->type == Figure::ROOK) {
 								 if (f->color == Figure::WHITE) {
 									 if (prevX == 0) {
-										 rookingWhiteLeft = false;
+										 origRookingsWhiteLeft = false;
 									 }
 									 if (prevX == 7) {
-										 rookingWhiteRight = false;
+										 origRookingsWhiteRight = false;
 									 }
 								 } else {
 									 if (prevX == 0) {
-										 rookingBlackLeft = false;
+										 origRookingsBlackLeft = false;
 									 }
 									 if (prevX == 7) {
-										 rookingBlackRight = false;
+										 origRookingsBlackRight = false;
 									 }
 								 }
 							 }
 							 if (f->type == f->KING) {
 								 if (f->color = f->BLACK) {
-									 rookingBlackLeft = false;
-									 rookingBlackRight = false;
+									 origRookingsBlackLeft = false;
+									 origRookingsBlackRight = false;
 								 } else {
-									 rookingWhiteLeft = false;
-									 rookingWhiteRight = false;
+									 origRookingsWhiteLeft = false;
+									 origRookingsWhiteRight = false;
 								 }
 							 }
+							 this->lastMovePreviousCoords = gcnew Coords(prevX, prevY);
 							 this->lastMovedFigure = f;
 							 dataGridView1->ClearSelection();
 							 this->selectedFigure = nullptr;
@@ -566,7 +571,7 @@ namespace form {
 					 }
 
 					 bool isLegalMove(Figure^ offence, int x, int y) {
-						 List<Coords^>^ moves = offence->getAllMoves();
+						 List<Coords^>^ moves = offence->getAllMoves(field);
 						 for (int i = 0; i < moves->Count; i++) {
 							 if (moves[i]->x == x && moves[i]->y == y) {
 								 return true;
@@ -580,8 +585,8 @@ namespace form {
 						 Figure^ offence = nullptr;
 						 for (int x = 0; x < 8; x++) {
 							 for (int y = 0; y < 8; y++) {
-								 if (nullptr != field[x, y] && field[x, y]->type == Figure::KING && field[x, y]->color == forWhatColor) {
-									 king = field[x, y];
+								 if (nullptr != field[y, x] && field[y, x]->type == Figure::KING && field[y, x]->color == forWhatColor) {
+									 king = field[y, x];
 									 break;
 								 }
 							 }
@@ -593,8 +598,8 @@ namespace form {
 						 int offenceColor = (forWhatColor == Figure::WHITE) ? Figure::BLACK : Figure::WHITE;
 						 for (int x = 0; x < 8; x++) {
 							 for (int y = 0; y < 8; y++) {
-								 if (nullptr != field[x, y] && field[x, y]->color == offenceColor) {
-									 offence = field[x, y];
+								 if (nullptr != field[y, x] && field[y, x]->color == offenceColor) {
+									 offence = field[y, x];
 									 if (this->isLegalMove(offence, king->x, king->y)) {
 										 return true;
 									 }
@@ -738,10 +743,13 @@ namespace form {
 								 int y = e->RowIndex;
 								 bool isLegal = isLegalMove(this->selectedFigure, x, y);
 								 if (isLegal) {
+									 this->moveFigure(this->selectedFigure, x, y);
+									/*									
 									 removeFigure(this->selectedFigure->x, this->selectedFigure->y);
 									 this->selectedFigure->x = x;
 									 this->selectedFigure->y = y;
 									 placeFigure(this->selectedFigure);
+									 */
 									 dataGridView1->ClearSelection();
 								 }
 							 }
