@@ -69,7 +69,8 @@ namespace form {
 	private: System::Windows::Forms::Button^  b_remove;
 	private: System::Windows::Forms::Button^  b_checkmate;
 	private: System::Windows::Forms::Label^  label1;
-	private: System::Windows::Forms::NumericUpDown^  numericUpDown1;
+	private: System::Windows::Forms::NumericUpDown^  nudMoves;
+
 
 
 
@@ -84,7 +85,8 @@ namespace form {
 			rookingWhiteRight,
 			rookingBlackLeft ,
 			rookingBlackRight;
-		/// </summary>
+	private: System::Windows::Forms::Button^  b_remall;
+					 /// </summary>
 
 
 #pragma region Windows Form Designer generated code
@@ -100,7 +102,7 @@ namespace form {
 			this->groupBox1 = (gcnew System::Windows::Forms::GroupBox());
 			this->b_checkmate = (gcnew System::Windows::Forms::Button());
 			this->label1 = (gcnew System::Windows::Forms::Label());
-			this->numericUpDown1 = (gcnew System::Windows::Forms::NumericUpDown());
+			this->nudMoves = (gcnew System::Windows::Forms::NumericUpDown());
 			this->b_remove = (gcnew System::Windows::Forms::Button());
 			this->b_standard = (gcnew System::Windows::Forms::Button());
 			this->b_place = (gcnew System::Windows::Forms::Button());
@@ -124,8 +126,9 @@ namespace form {
 			this->Column6 = (gcnew System::Windows::Forms::DataGridViewImageColumn());
 			this->Column7 = (gcnew System::Windows::Forms::DataGridViewImageColumn());
 			this->Column8 = (gcnew System::Windows::Forms::DataGridViewImageColumn());
+			this->b_remall = (gcnew System::Windows::Forms::Button());
 			this->groupBox1->SuspendLayout();
-			(cli::safe_cast<System::ComponentModel::ISupportInitialize^  >(this->numericUpDown1))->BeginInit();
+			(cli::safe_cast<System::ComponentModel::ISupportInitialize^  >(this->nudMoves))->BeginInit();
 			this->panel2->SuspendLayout();
 			this->panel1->SuspendLayout();
 			this->groupBox2->SuspendLayout();
@@ -136,7 +139,8 @@ namespace form {
 			// 
 			this->groupBox1->Controls->Add(this->b_checkmate);
 			this->groupBox1->Controls->Add(this->label1);
-			this->groupBox1->Controls->Add(this->numericUpDown1);
+			this->groupBox1->Controls->Add(this->nudMoves);
+			this->groupBox1->Controls->Add(this->b_remall);
 			this->groupBox1->Controls->Add(this->b_remove);
 			this->groupBox1->Controls->Add(this->b_standard);
 			this->groupBox1->Controls->Add(this->b_place);
@@ -168,12 +172,12 @@ namespace form {
 			this->label1->TabIndex = 7;
 			this->label1->Text = L"Moves to checkmate";
 			// 
-			// numericUpDown1
+			// nudMoves
 			// 
-			this->numericUpDown1->Location = System::Drawing::Point(120, 369);
-			this->numericUpDown1->Name = L"numericUpDown1";
-			this->numericUpDown1->Size = System::Drawing::Size(36, 20);
-			this->numericUpDown1->TabIndex = 6;
+			this->nudMoves->Location = System::Drawing::Point(120, 369);
+			this->nudMoves->Name = L"nudMoves";
+			this->nudMoves->Size = System::Drawing::Size(36, 20);
+			this->nudMoves->TabIndex = 6;
 			// 
 			// b_remove
 			// 
@@ -417,6 +421,16 @@ namespace form {
 			this->Column8->Name = L"Column8";
 			this->Column8->Width = 50;
 			// 
+			// b_remall
+			// 
+			this->b_remall->Location = System::Drawing::Point(10, 335);
+			this->b_remall->Name = L"b_remall";
+			this->b_remall->Size = System::Drawing::Size(146, 23);
+			this->b_remall->TabIndex = 5;
+			this->b_remall->Text = L"Remove All";
+			this->b_remall->UseVisualStyleBackColor = true;
+			this->b_remall->Click += gcnew System::EventHandler(this, &Form1::b_remall_Click);
+			// 
 			// Form1
 			// 
 			this->AutoScaleDimensions = System::Drawing::SizeF(6, 13);
@@ -429,7 +443,7 @@ namespace form {
 			this->Load += gcnew System::EventHandler(this, &Form1::Form1_Load);
 			this->groupBox1->ResumeLayout(false);
 			this->groupBox1->PerformLayout();
-			(cli::safe_cast<System::ComponentModel::ISupportInitialize^  >(this->numericUpDown1))->EndInit();
+			(cli::safe_cast<System::ComponentModel::ISupportInitialize^  >(this->nudMoves))->EndInit();
 			this->panel2->ResumeLayout(false);
 			this->panel2->PerformLayout();
 			this->panel1->ResumeLayout(false);
@@ -458,7 +472,11 @@ namespace form {
 	private: System::Void Form1_Load(System::Object^  sender, System::EventArgs^  e) {
 						 this->field = gcnew array<Figure^, 2>(8, 8);
 						 this->initTable();
-						 placeFigure(gcnew Figure(4, 6, Figure::QUEEN, Figure::BLACK));
+						 placeFigure(gcnew Figure(4, 6, Figure::KING, Figure::WHITE), field);
+						 						 placeFigure(gcnew Figure(4, 0, Figure::KING, Figure::BLACK), field);
+												 						 placeFigure(gcnew Figure(0, 1, Figure::PAWN, Figure::BLACK), field);
+																		 						 placeFigure(gcnew Figure(5, 1, Figure::ROOK, Figure::WHITE), field);
+																								 						 placeFigure(gcnew Figure(3, 3, Figure::QUEEN, Figure::WHITE), field);
 					 }
 
 					 System::Void initTable() {
@@ -479,25 +497,49 @@ namespace form {
 						 lastMovePreviousCoords = nullptr;
 					 }
 
-					 System::Void placeFigure(Figure^ f) {
+					 System::Void placeFigure(Figure^ f, array<Figure^, 2>^ field) {
 						 String^ colorDir = (f->color == Figure::WHITE) ? L"white/" : L"black/";
 						 String^ figureName = f->getTypeString() + L".png";
 						 this->dataGridView1->Rows[f->y]->Cells[f->x]->Value = Image::FromFile(L"figures/" + colorDir + figureName);
-						 this->field[f->y, f->x] = f;
+						 field[f->y, f->x] = f;
 					 }
 
-					 System::Void removeFigure(int x, int y) {
+					 System::Void removeFigure(int x, int y, array<Figure^, 2>^ field) {
 						 this->dataGridView1->Rows[y]->Cells[x]->Value = Image::FromFile(L"figures/empty.png" );
-						 this->field[y, x] = nullptr;
+						 field[y, x] = nullptr;
 					 }
+/*
 
 					 bool moveFigure(Figure^ f, int x, int y) {
+						 return moveFigure(f, x, y, this->field);
+					 }*/
+					 void drawField(array<Figure^,2>^ _field) {
+						 initTable();
+						 Figure^ f = nullptr;
+						 for(int x = 0; x <8; x++) {
+							 for (int y = 0; y < 8; y++ ) {
+								 f = _field[y,x];
+								 
+								 if (nullptr != f) {
+									 if (f->x != x || f->y != y) {
+										 throw gcnew Exception(L"Координаты фигуры и её расположение на поле не совпадают");
+									 }
+									 placeFigure(f, _field);
+								 }
+							 }
+						 }
+					 }
+
+					 bool moveFigure(Figure^ f, int x, int y, array<Figure^, 2>^ field) {
+						 if (nullptr == field) {
+							 field = this->field;
+						 }
 						 Figure^ target = field[y,x];
 						 if (nullptr != target && target->color == f->color) {
 							 return false;
 						 }
 						 int prevX = f->x, prevY = f->y;
-						 bool isChecked = this->isCheck(f->color);
+						 bool isChecked = this->isCheck(f->color, field);
 						 bool origRookingsWhiteLeft = rookingWhiteLeft;
 						 bool origRookingsWhiteRight = rookingWhiteRight;
 						 bool origRookingsBlackLeft = rookingBlackLeft;
@@ -505,17 +547,30 @@ namespace form {
 						 if (isChecked) {
 							 rookingBlackLeft = rookingBlackRight = rookingWhiteLeft = rookingWhiteRight = false;
 						 }
-						 bool isLegal = isLegalMove(f, x, y);
+						 bool isLegal = isLegalMove(f, x, y, field);
 						 if (isLegal) {
-							 removeFigure(f->x, f->y);
+							 if (f->type == Figure::KING && Math::Abs(x - prevX) > 1) {
+								 if (x == 6 ) {
+									 Figure^ rook = field[f->y, 7];
+									 removeFigure(7, f->y, field);
+									 rook->x = 5;
+									 placeFigure(rook, field);
+								 } else {
+									 Figure^ rook = field[f->y, 0];
+									 removeFigure(0, f->y, field);
+									 rook->x = 3;
+									 placeFigure(rook, field);
+								 }
+							 }
+							 removeFigure(f->x, f->y, field);
 							 f->x = x;
 							 f->y = y;
-							 placeFigure(f);
+							 placeFigure(f, field);
 							 if (isCheck(f->color)) {
 								 if (nullptr == target) {
-									 removeFigure(x,y);
+									 removeFigure(x,y, field);
 								 } else {
-										placeFigure(target);
+										placeFigure(target, field);
 								 }
 								
 								 rookingWhiteLeft = origRookingsWhiteLeft;
@@ -524,7 +579,7 @@ namespace form {
 								 rookingBlackRight = origRookingsBlackRight;
 								 f->x = prevX;
 								 f->y = prevY;
-								 placeFigure(f);
+								 placeFigure(f, field);
 								 return false;
 							 }
 							 if(f->type == Figure::ROOK) {
@@ -545,7 +600,7 @@ namespace form {
 								 }
 							 }
 							 if (f->type == f->KING) {
-								 if (f->color = f->BLACK) {
+								 if (f->color == f->BLACK) {
 									 origRookingsBlackLeft = false;
 									 origRookingsBlackRight = false;
 								 } else {
@@ -570,17 +625,65 @@ namespace form {
 						 return false;
 					 }
 
-					 bool isLegalMove(Figure^ offence, int x, int y) {
+					 bool isLegalMove(Figure^ orig_offence, int x, int y, array<Figure^, 2>^ field) {
+						 //todo check for check
+						 Figure^ offence = gcnew Figure(orig_offence);
 						 List<Coords^>^ moves = offence->getAllMoves(field);
 						 for (int i = 0; i < moves->Count; i++) {
 							 if (moves[i]->x == x && moves[i]->y == y) {
-								 return true;
+								 if (offence->type == Figure::KING && Math::Abs(offence->x - x) > 1) {
+									 bool rookingAllowed = true;
+									 if (offence->color == Figure::BLACK)
+									 {
+										 if (offence->x > x) {
+											 for (int cx = 0; cx < offence->x; cx++) {
+												 if (isTileUnderAttack(cx, offence->y, Figure::WHITE, field)) {
+													 return false;
+												 }
+											 }
+											 return rookingBlackLeft;
+										 } else {
+											 for (int cx = offence->x+1; cx < 8; cx++) {
+												 if (isTileUnderAttack(cx, offence->y, Figure::WHITE, field)) {
+													 return false;
+												 }
+											 }
+											 return  rookingBlackRight;
+										 }											 
+									 } else {
+										 if (offence->x > x) {
+											 for (int cx = 0; cx < offence->x; cx++) {
+												 if (isTileUnderAttack(cx, offence->y, Figure::BLACK, field)) {
+													 return false;
+												 }
+											 }
+											 return rookingWhiteLeft;
+										 } else {
+											 for (int cx = offence->x+1; cx < 8; cx++) {
+												 if (isTileUnderAttack(cx, offence->y, Figure::BLACK, field)) {
+													 return false;
+												 }
+											 }
+											 return  rookingWhiteRight;
+										 }
+									 }
+								 }
+								 array<Figure^, 2>^ fieldCpy = (array<Figure^, 2>^)field->Clone();
+								 removeFigure(offence->x, offence->y, fieldCpy);
+								 offence->x = x; 
+								 offence->y=y;
+								 placeFigure(offence,fieldCpy);
+								 return !isCheck(offence->color, fieldCpy);
 							 }
 						 }
 						 return false;
 					 };
 
 					 bool isCheck(int forWhatColor) {
+						 return isCheck(forWhatColor, this->field);
+					 }
+
+					 bool isCheck(int forWhatColor, array<Figure^, 2>^ field) {
 						 Figure^ king = nullptr;
 						 Figure^ offence = nullptr;
 						 for (int x = 0; x < 8; x++) {
@@ -600,7 +703,7 @@ namespace form {
 							 for (int y = 0; y < 8; y++) {
 								 if (nullptr != field[y, x] && field[y, x]->color == offenceColor) {
 									 offence = field[y, x];
-									 if (this->isLegalMove(offence, king->x, king->y)) {
+									 if (this->isLegalMove(offence, king->x, king->y, field)) {
 										 return true;
 									 }
 								 }
@@ -609,6 +712,64 @@ namespace form {
 
 						 return false;
 					 }
+
+					 bool isCheckmate(int forWhatColor, array<Figure^, 2>^ field) {
+						 Figure^ king = nullptr;
+						 Figure^ defence = nullptr;
+						 if (!isCheck(forWhatColor, field)) {
+							 return false;
+						 }
+						 for (int x = 0; x < 8; x++) {
+							 for (int y = 0; y < 8; y++) {
+								 if (nullptr != field[y, x] && field[y, x]->type == Figure::KING && field[y, x]->color == forWhatColor) {
+									 king = field[y, x];
+									 break;
+								 }
+							 }
+						 }
+						 if (nullptr == king) {
+							 MessageBox::Show(L"No king on a desk");
+							 return false;
+						 }
+						 List<Coords^>^ moves = king->getAllMoves(field);
+						 for (int m = 0; m < moves->Count; m++) {
+							 if (isLegalMove(king, moves[m]->x, moves[m]->y, field)) {
+								 return false;
+							 }
+						 }
+						 int defenceColor = forWhatColor; //(forWhatColor == Figure::WHITE) ? Figure::BLACK : Figure::WHITE;
+						 for (int x = 0; x < 8; x++) {
+							 for (int y = 0; y < 8; y++) {
+								 if (nullptr != field[y, x] && field[y, x]->color == defenceColor) {
+									 defence = field[y, x];
+									 moves = field[y,x]->getAllMoves(field);
+									 for (int m = 0; m < moves->Count; m++ ) {
+										 if (this->isLegalMove(defence, moves[m]->x, moves[m]->y, field)) {
+											 return false;
+										 }
+									 }
+								 }
+							 }
+							}
+						 return true;
+					 }
+
+					 bool isTileUnderAttack(int x, int y, int offenceColor, array<Figure^, 2>^ field) {
+						 Figure^ target = nullptr;
+						 Figure^ offence = nullptr;
+						 for (int cx = 0; cx < 8; cx++) {
+							 for (int cy = 0; cy < 8; cy++) {
+								 if (nullptr != field[cy, cx] && field[cy, cx]->color == offenceColor) {
+									 offence = field[cy, cx];
+									 if (this->isLegalMove(offence, x, y, field)) {
+										 return true;
+									 }
+								 }
+							 }
+						 }
+						 return false;
+					 }
+
 
 	private: System::Void b_place_Click(System::Object^  sender, System::EventArgs^  e) {
 						 int type = Figure::PAWN, color = Figure::WHITE, y = 0, x = 0;
@@ -632,20 +793,21 @@ namespace form {
 						 }
 						 y = dataGridView1->CurrentCellAddress.Y;
 						 x = dataGridView1->CurrentCellAddress.X;
-						 placeFigure(gcnew Figure(x, y, type, color));
+						 placeFigure(gcnew Figure(x, y, type, color), field);
 					 }
 	private: System::Void b_remove_Click(System::Object^  sender, System::EventArgs^  e) {
 						 int y = dataGridView1->CurrentCellAddress.Y;
 						 int x = dataGridView1->CurrentCellAddress.X;
-						 removeFigure(x, y);
+						 removeFigure(x, y, field);
 					 }
 	private: System::Void b_standard_Click(System::Object^  sender, System::EventArgs^  e) {
 						 int color, type, x, y;
 						 for (x = 0; x < 8; x++) {
 							 for (y = 0; y < 8; y++) {
-								 removeFigure(x, y);
+								 removeFigure(x, y, field);
 							 }
 						 }
+						 rookingBlackLeft = rookingBlackRight = rookingWhiteLeft = rookingWhiteRight = true;
 
 						 /////////////////////////////////////////////////WHITE
 						 color = Figure::WHITE;
@@ -654,40 +816,40 @@ namespace form {
 						 type = Figure::PAWN;
 						 y = 6;
 						 for (x = 0; x < 8; x++) {
-							 placeFigure(gcnew Figure(x, y, type, color));
+							 placeFigure(gcnew Figure(x, y, type, color), field);
 						 }
 
 						 //ROOKS
 						 y = 7;
 						 type = Figure::ROOK;
 						 x = 0;
-						 placeFigure(gcnew Figure(x, y, type, color));
+						 placeFigure(gcnew Figure(x, y, type, color), field);
 						 x = 7;
-						 placeFigure(gcnew Figure(x, y, type, color));
+						 placeFigure(gcnew Figure(x, y, type, color), field);
 
 						 //KNIGHTS
 						 type = Figure::KNIGHT;
 						 x = 1;
-						 placeFigure(gcnew Figure(x, y, type, color));
+						 placeFigure(gcnew Figure(x, y, type, color), field);
 						 x = 6;
-						 placeFigure(gcnew Figure(x, y, type, color));
+						 placeFigure(gcnew Figure(x, y, type, color), field);
 
 						 //BISHOPS
 						 type = Figure::BISHOP;
 						 x = 2;
-						 placeFigure(gcnew Figure(x, y, type, color));
+						 placeFigure(gcnew Figure(x, y, type, color), field);
 						 x = 5;
-						 placeFigure(gcnew Figure(x, y, type, color));
+						 placeFigure(gcnew Figure(x, y, type, color), field);
 
 						 //QUEEN
 						 type = Figure::QUEEN;
 						 x = 3;
-						 placeFigure(gcnew Figure(x, y, type, color));
+						 placeFigure(gcnew Figure(x, y, type, color), field);
 
 						 //KING
 						 type = Figure::KING;
 						 x = 4;
-						 placeFigure(gcnew Figure(x, y, type, color));
+						 placeFigure(gcnew Figure(x, y, type, color), field);
 
 						 ///////////////////////////////////////////////BLACK
 						 color = Figure::BLACK;
@@ -696,44 +858,132 @@ namespace form {
 						 type = Figure::PAWN;
 						 y = 1;
 						 for (x = 0; x < 8; x++) {
-							 placeFigure(gcnew Figure(x, y, type, color));
+							 placeFigure(gcnew Figure(x, y, type, color), field);
 						 }
 
 						 //ROOKS
 						 y = 0;
 						 type = Figure::ROOK;
 						 x = 0;
-						 placeFigure(gcnew Figure(x, y, type, color));
+						 placeFigure(gcnew Figure(x, y, type, color), field);
 						 x = 7;
-						 placeFigure(gcnew Figure(x, y, type, color));
-
+						 placeFigure(gcnew Figure(x, y, type, color), field);
 						 //KNIGHTS
 						 type = Figure::KNIGHT;
 						 x = 1;
-						 placeFigure(gcnew Figure(x, y, type, color));
+						 placeFigure(gcnew Figure(x, y, type, color), field);
 						 x = 6;
-						 placeFigure(gcnew Figure(x, y, type, color));
+						 placeFigure(gcnew Figure(x, y, type, color), field);
 
 						 //BISHOPS
 						 type = Figure::BISHOP;
 						 x = 2;
-						 placeFigure(gcnew Figure(x, y, type, color));
+						 placeFigure(gcnew Figure(x, y, type, color), field);
 						 x = 5;
-						 placeFigure(gcnew Figure(x, y, type, color));
+						 placeFigure(gcnew Figure(x, y, type, color), field);
 
 						 //QUEEN
 						 type = Figure::QUEEN;
 						 x = 3;
-						 placeFigure(gcnew Figure(x, y, type, color));
+						 placeFigure(gcnew Figure(x, y, type, color), field);
 
 						 //KING
 						 type = Figure::KING;
 						 x = 4;
-						 placeFigure(gcnew Figure(x, y, type, color));
+						 placeFigure(gcnew Figure(x, y, type, color), field);
 
 					 }
 	private: System::Void b_checkmate_Click(System::Object^  sender, System::EventArgs^  e) {
+						 int movesToCheckmate = Convert::ToInt32(nudMoves->Value);
+						 List<Coords^> ^ resultMoves = gcnew List<Coords^>(0);
+						 resultMoves = findCheckmate(movesToCheckmate, Figure::WHITE, Figure::WHITE, this->field);
+					 }
 
+					 List<Coords^>^ findCheckmate(int movesToCheckmate, int offenceColor, int currentColor, array<Figure^, 2>^ field) {
+						 List<Coords^>^ res = gcnew List<Coords^>(0);
+						 //array<Figure^, 2>^ fieldCpy = (array<Figure^, 2>^)field->Clone();
+						 int defenceColor = (offenceColor == Figure::BLACK ) ? Figure::WHITE : Figure::BLACK;
+						 Figure^ f = nullptr;
+						 List<Coords^>^ cFigMoves = gcnew List<Coords^>;
+						 Coords^ pos;
+						 for(int cx = 0;  cx<8; cx++){
+							 for (int cy =0 ; cy<8; cy++)
+							 {
+								 f = field[cy, cx];
+								 if (nullptr != f && currentColor == f->color ) {
+									 pos = gcnew Coords(f->x, f->y);
+									 cFigMoves = f->getAllMoves(field);
+									 for (int m = 0; m<cFigMoves->Count; m++) {
+										 f = field[cy, cx];
+										 if (isLegalMove(f, cFigMoves[m]->x, cFigMoves[m]->y, field)) {
+											 array<Figure^, 2>^ fieldCpy = (array<Figure^, 2>^)field->Clone();
+											 if (!moveFigure(f, cFigMoves[m]->x, cFigMoves[m]->y, fieldCpy)) {
+												 continue;
+											 }
+											 drawField(fieldCpy);
+											MessageBox::Show(Convert::ToChar('a'+pos->x) + L"" + pos->y + " " + Convert::ToChar('a' + f->x) + f->y );
+											 if (movesToCheckmate < 2) {
+												 if (f->color == offenceColor) {
+													 //последний ход нападающего, должен быть поставлен шах
+													 if (!isCheck(defenceColor, fieldCpy)) {
+														 continue;
+													 } else {
+														 res = findCheckmate(movesToCheckmate, offenceColor, defenceColor, fieldCpy);
+														 if (nullptr == res) {
+															 continue;
+														 } else {
+															 res->Add(pos);
+															 res->Add(gcnew Coords(f->x, f->y));
+														 }
+													 }
+													 //последний ход нападения
+												 } else {
+													 //последний ход защищающегося, либо мат (пустой список) либо nullptr
+													 if (!isCheckmate(defenceColor, fieldCpy) ) {
+														 return nullptr;
+													 } else {
+														 continue;
+													 }
+													 //последний ход защиты
+												 }
+												 if (currentColor != offenceColor) {
+													 return gcnew List<Coords^>();
+												 } else {
+													 return nullptr;
+												 }
+												 //ходов до мата < 2
+											 } else {
+												 //ходов до мата > 2
+												 if (currentColor == offenceColor) {
+													 //обычный ход нападения
+													 res = findCheckmate(movesToCheckmate -1, offenceColor, defenceColor,fieldCpy);
+													 if (nullptr == res) {
+														  continue;
+													 } else {
+														 res->Add(pos);
+														 res->Add(gcnew Coords(f->x, f->y));
+													 }
+													 //обычный ход нападения
+												 } else {
+													 //обычный ход защиты
+													 res = findCheckmate(movesToCheckmate, offenceColor, offenceColor,fieldCpy);
+													 if (nullptr == res) {
+														 return nullptr;
+													 } else {
+														 res->Add(pos);
+														 res->Add(gcnew Coords(f->x, f->y));
+													 }
+													 //обычный ход защиты
+												 }
+												 //ходов до мата > 2
+											 }
+										 } 
+									 }
+								 } 
+							 }
+						 }
+
+						 return nullptr;
 					 }
 
 	private: System::Void dataGridView1_CellMouseClick(System::Object^  sender, System::Windows::Forms::DataGridViewCellMouseEventArgs^  e) {
@@ -741,9 +991,9 @@ namespace form {
 							 if (nullptr != this->selectedFigure) {
 								 int x = e->ColumnIndex;
 								 int y = e->RowIndex;
-								 bool isLegal = isLegalMove(this->selectedFigure, x, y);
+								 bool isLegal = isLegalMove(this->selectedFigure, x, y, this->field);
 								 if (isLegal) {
-									 this->moveFigure(this->selectedFigure, x, y);
+									 this->moveFigure(this->selectedFigure, x, y, field);
 									/*									
 									 removeFigure(this->selectedFigure->x, this->selectedFigure->y);
 									 this->selectedFigure->x = x;
@@ -757,6 +1007,9 @@ namespace form {
 					 }
 
 
-	};
+	private: System::Void b_remall_Click(System::Object^  sender, System::EventArgs^  e) {
+						 initTable();
+					 }
+};
 }
 

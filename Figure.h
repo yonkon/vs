@@ -32,6 +32,7 @@ public:
 	static const int BISHOP = 1;
 	static const int KING = 5;
 	Figure(int _x, int _y, int _type, int _color);
+	Figure(Figure^);
 	System::Collections::Generic::List<Coords^>^ getAllMoves(array<Figure^,2>^ field) {
 		switch (this->type)
 		{
