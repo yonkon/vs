@@ -103,6 +103,7 @@ namespace form {
 			this->b_checkmate = (gcnew System::Windows::Forms::Button());
 			this->label1 = (gcnew System::Windows::Forms::Label());
 			this->nudMoves = (gcnew System::Windows::Forms::NumericUpDown());
+			this->b_remall = (gcnew System::Windows::Forms::Button());
 			this->b_remove = (gcnew System::Windows::Forms::Button());
 			this->b_standard = (gcnew System::Windows::Forms::Button());
 			this->b_place = (gcnew System::Windows::Forms::Button());
@@ -126,7 +127,6 @@ namespace form {
 			this->Column6 = (gcnew System::Windows::Forms::DataGridViewImageColumn());
 			this->Column7 = (gcnew System::Windows::Forms::DataGridViewImageColumn());
 			this->Column8 = (gcnew System::Windows::Forms::DataGridViewImageColumn());
-			this->b_remall = (gcnew System::Windows::Forms::Button());
 			this->groupBox1->SuspendLayout();
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^  >(this->nudMoves))->BeginInit();
 			this->panel2->SuspendLayout();
@@ -178,6 +178,17 @@ namespace form {
 			this->nudMoves->Name = L"nudMoves";
 			this->nudMoves->Size = System::Drawing::Size(36, 20);
 			this->nudMoves->TabIndex = 6;
+			this->nudMoves->Value = System::Decimal(gcnew cli::array< System::Int32 >(4) {3, 0, 0, 0});
+			// 
+			// b_remall
+			// 
+			this->b_remall->Location = System::Drawing::Point(10, 335);
+			this->b_remall->Name = L"b_remall";
+			this->b_remall->Size = System::Drawing::Size(146, 23);
+			this->b_remall->TabIndex = 5;
+			this->b_remall->Text = L"Remove All";
+			this->b_remall->UseVisualStyleBackColor = true;
+			this->b_remall->Click += gcnew System::EventHandler(this, &Form1::b_remall_Click);
 			// 
 			// b_remove
 			// 
@@ -421,16 +432,6 @@ namespace form {
 			this->Column8->Name = L"Column8";
 			this->Column8->Width = 50;
 			// 
-			// b_remall
-			// 
-			this->b_remall->Location = System::Drawing::Point(10, 335);
-			this->b_remall->Name = L"b_remall";
-			this->b_remall->Size = System::Drawing::Size(146, 23);
-			this->b_remall->TabIndex = 5;
-			this->b_remall->Text = L"Remove All";
-			this->b_remall->UseVisualStyleBackColor = true;
-			this->b_remall->Click += gcnew System::EventHandler(this, &Form1::b_remall_Click);
-			// 
 			// Form1
 			// 
 			this->AutoScaleDimensions = System::Drawing::SizeF(6, 13);
@@ -480,9 +481,12 @@ namespace form {
 					 }
 
 					 System::Void initTable() {
-						 rookingBlackLeft = rookingBlackRight = rookingWhiteLeft = rookingWhiteRight = true;
+						 rookingBlackLeft = rookingBlackRight = rookingWhiteLeft = rookingWhiteRight = false;
 						 this->dataGridView1->Rows->Clear();
 						 this->dataGridView1->Rows->Add(8);
+						 for(int row=0; row<8; row++) {
+							 this->dataGridView1->Rows[row]->HeaderCell->Value = L""+(8-row);
+						 }
 						 int ccolor = Figure::WHITE;
 						 for (int i = 0; i < 64; i++) {
 							 if (i % 8) {
@@ -498,14 +502,20 @@ namespace form {
 					 }
 
 					 System::Void placeFigure(Figure^ f, array<Figure^, 2>^ field) {
-						 String^ colorDir = (f->color == Figure::WHITE) ? L"white/" : L"black/";
-						 String^ figureName = f->getTypeString() + L".png";
-						 this->dataGridView1->Rows[f->y]->Cells[f->x]->Value = Image::FromFile(L"figures/" + colorDir + figureName);
 						 field[f->y, f->x] = f;
 					 }
 
-					 System::Void removeFigure(int x, int y, array<Figure^, 2>^ field) {
+					 System::Void drawFigure(Figure^ f) {
+						 String^ colorDir = (f->color == Figure::WHITE) ? L"white/" : L"black/";
+						 String^ figureName = f->getTypeString() + L".png";
+						 this->dataGridView1->Rows[f->y]->Cells[f->x]->Value = Image::FromFile(L"figures/" + colorDir + figureName);
+					 }
+
+					 System::Void eraseFigure(int x, int y) {
 						 this->dataGridView1->Rows[y]->Cells[x]->Value = Image::FromFile(L"figures/empty.png" );
+					 }
+
+					 System::Void removeFigure(int x, int y, array<Figure^, 2>^ field) {
 						 field[y, x] = nullptr;
 					 }
 /*
@@ -525,6 +535,7 @@ namespace form {
 										 throw gcnew Exception(L"Координаты фигуры и её расположение на поле не совпадают");
 									 }
 									 placeFigure(f, _field);
+									 drawFigure(f);
 								 }
 							 }
 						 }
@@ -558,7 +569,7 @@ namespace form {
 								 } else {
 									 Figure^ rook = field[f->y, 0];
 									 removeFigure(0, f->y, field);
-									 rook->x = 3;
+ 									 rook->x = 3;
 									 placeFigure(rook, field);
 								 }
 							 }
@@ -794,11 +805,13 @@ namespace form {
 						 y = dataGridView1->CurrentCellAddress.Y;
 						 x = dataGridView1->CurrentCellAddress.X;
 						 placeFigure(gcnew Figure(x, y, type, color), field);
+						 drawField(field);
 					 }
 	private: System::Void b_remove_Click(System::Object^  sender, System::EventArgs^  e) {
 						 int y = dataGridView1->CurrentCellAddress.Y;
 						 int x = dataGridView1->CurrentCellAddress.X;
 						 removeFigure(x, y, field);
+						 drawField(field);
 					 }
 	private: System::Void b_standard_Click(System::Object^  sender, System::EventArgs^  e) {
 						 int color, type, x, y;
@@ -891,37 +904,64 @@ namespace form {
 						 type = Figure::KING;
 						 x = 4;
 						 placeFigure(gcnew Figure(x, y, type, color), field);
-
+						 drawField(field);
 					 }
 	private: System::Void b_checkmate_Click(System::Object^  sender, System::EventArgs^  e) {
+						 DateTime beginDate =DateTime::Now;
 						 int movesToCheckmate = Convert::ToInt32(nudMoves->Value);
 						 List<Coords^> ^ resultMoves = gcnew List<Coords^>(0);
 						 resultMoves = findCheckmate(movesToCheckmate, Figure::WHITE, Figure::WHITE, this->field);
+						 drawField(this->field);
+						 String^ checkmateMoves = L"Ходы для белых, чтобы поставить мат за указанное количество ходов:\n";
+						 for (int rm= resultMoves->Count-2; rm >= 0; rm-=2)
+						 {
+							 Coords^ cm = resultMoves[rm];
+							 Coords^ cm2 = resultMoves[rm+1];
+							 checkmateMoves+= Convert::ToChar('a'+ cm->x) + L"" + (8 - cm->y) + " => " + Convert::ToChar('a'+ cm2->x) + L"" + (8 - cm2->y) + "\n";
+						 }
+						 DateTime endDate = DateTime::Now;
+						 checkmateMoves += L"Врем просчётов: " + beginDate.TimeOfDay + L" - " + endDate.TimeOfDay + L" ("+(endDate-beginDate) + ")";
+						 
+						 MessageBox::Show(checkmateMoves);
 					 }
 
 					 List<Coords^>^ findCheckmate(int movesToCheckmate, int offenceColor, int currentColor, array<Figure^, 2>^ field) {
 						 List<Coords^>^ res = gcnew List<Coords^>(0);
 						 //array<Figure^, 2>^ fieldCpy = (array<Figure^, 2>^)field->Clone();
 						 int defenceColor = (offenceColor == Figure::BLACK ) ? Figure::WHITE : Figure::BLACK;
+
+						 //Условие выхода: последний ход защиты - либо мат(пустой список ходов), либо nullptr
+						 if (movesToCheckmate == 1 && currentColor == defenceColor) {
+							 if (isCheckmate(defenceColor, field)) {
+								 return gcnew List<Coords^>(0);
+							 } else {
+								 return nullptr;
+							 }
+						 }
+
+						 Figure^ currentFigure = nullptr;
 						 Figure^ f = nullptr;
 						 List<Coords^>^ cFigMoves = gcnew List<Coords^>;
 						 Coords^ pos;
 						 for(int cx = 0;  cx<8; cx++){
 							 for (int cy =0 ; cy<8; cy++)
 							 {
-								 f = field[cy, cx];
-								 if (nullptr != f && currentColor == f->color ) {
-									 pos = gcnew Coords(f->x, f->y);
-									 cFigMoves = f->getAllMoves(field);
+								 currentFigure = field[cy, cx];
+								 if (nullptr != currentFigure && currentColor == currentFigure->color ) {
+									 pos = gcnew Coords(currentFigure->x, currentFigure->y);
+									 cFigMoves = currentFigure->getAllMoves(field);
 									 for (int m = 0; m<cFigMoves->Count; m++) {
-										 f = field[cy, cx];
-										 if (isLegalMove(f, cFigMoves[m]->x, cFigMoves[m]->y, field)) {
+										 f = gcnew Figure(currentFigure);
+										 int dstX, dstY;
+										 dstX = cFigMoves[m]->x;
+										 dstY = cFigMoves[m]->y;
+										 if (isLegalMove(f, dstX, dstY, field)) {
 											 array<Figure^, 2>^ fieldCpy = (array<Figure^, 2>^)field->Clone();
-											 if (!moveFigure(f, cFigMoves[m]->x, cFigMoves[m]->y, fieldCpy)) {
+											 if (!moveFigure(f, dstX, dstY, fieldCpy)) {
 												 continue;
 											 }
 											 drawField(fieldCpy);
-											MessageBox::Show(Convert::ToChar('a'+pos->x) + L"" + pos->y + " " + Convert::ToChar('a' + f->x) + f->y );
+//											MessageBox::Show(Convert::ToChar('a'+pos->x) + L"" + pos->y + " " + Convert::ToChar('a' + f->x) + f->y );
 											 if (movesToCheckmate < 2) {
 												 if (f->color == offenceColor) {
 													 //последний ход нападающего, должен быть поставлен шах
@@ -934,10 +974,15 @@ namespace form {
 														 } else {
 															 res->Add(pos);
 															 res->Add(gcnew Coords(f->x, f->y));
+															 return res;
 														 }
 													 }
 													 //последний ход нападения
-												 } else {
+												 }
+											
+												 /*
+												 //TODO разобраться, нужен ли этот код
+												 else {
 													 //последний ход защищающегося, либо мат (пустой список) либо nullptr
 													 if (!isCheckmate(defenceColor, fieldCpy) ) {
 														 return nullptr;
@@ -951,22 +996,26 @@ namespace form {
 												 } else {
 													 return nullptr;
 												 }
+											 */
+
 												 //ходов до мата < 2
-											 } else {
+											 }
+												 else {
 												 //ходов до мата > 2
 												 if (currentColor == offenceColor) {
 													 //обычный ход нападения
-													 res = findCheckmate(movesToCheckmate -1, offenceColor, defenceColor,fieldCpy);
+													 res = findCheckmate(movesToCheckmate, offenceColor, defenceColor,fieldCpy);
 													 if (nullptr == res) {
 														  continue;
 													 } else {
 														 res->Add(pos);
 														 res->Add(gcnew Coords(f->x, f->y));
+														 return res;
 													 }
 													 //обычный ход нападения
 												 } else {
 													 //обычный ход защиты
-													 res = findCheckmate(movesToCheckmate, offenceColor, offenceColor,fieldCpy);
+													 res = findCheckmate(movesToCheckmate-1, offenceColor, offenceColor,fieldCpy);
 													 if (nullptr == res) {
 														 return nullptr;
 													 } else {
@@ -983,7 +1032,7 @@ namespace form {
 							 }
 						 }
 
-						 return nullptr;
+						 return res;
 					 }
 
 	private: System::Void dataGridView1_CellMouseClick(System::Object^  sender, System::Windows::Forms::DataGridViewCellMouseEventArgs^  e) {
@@ -1009,6 +1058,7 @@ namespace form {
 
 	private: System::Void b_remall_Click(System::Object^  sender, System::EventArgs^  e) {
 						 initTable();
+						 drawField(field);
 					 }
 };
 }
